@@ -112,8 +112,10 @@ clean-all: clean clean-deps clean-docs
 app: ebin/$(PROJECT).app
 	$(eval MODULES := $(shell find ebin -type f -name \*.beam \
 		| sed 's/ebin\///;s/\.beam/,/' | sed '$$s/.$$//'))
+	$(eval GIT_TAG := $(shell git describe --tags))
 	$(appsrc_verbose) cat src/$(PROJECT).app.src \
 		| sed 's/{modules,[[:space:]]*\[\]}/{modules, \[$(MODULES)\]}/' \
+		| sed 's/{vsn,[[:space:]]*git}/{vsn, \"$(GIT_TAG)\"}/' \
 		> ebin/$(PROJECT).app
 
 define compile_erl
